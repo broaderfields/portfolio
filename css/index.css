@@ -4,7 +4,7 @@
     --slider-controls-button-background: rgba(0, 0, 0, 0.5);
     --slider-controls-button-background-hover: rgba(0, 0, 0, 0.8);
     --slider-controls-button-text-color: #F2EDDC;
-    --index-background-color: #132640;
+    /* --index-background-color: #132640; */
 }
 
 h1 {
@@ -13,9 +13,9 @@ h1 {
 }
 
 
-body {
+/* body {
     background-color: var(--index-background-color);
-}
+} */
 
 
 

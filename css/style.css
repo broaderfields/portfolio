@@ -11,6 +11,8 @@
 :root {
     --text-color: #F2EDDC;
 
+    --body-background-color: #132640;
+
     --header-background-color: #132640;
     --box-shadow: rgba(0, 0, 0, 0.1);
 
@@ -76,7 +78,7 @@ p, h1, h2, h3, h4, h5, a, main ol, #textPath{
 
 
 body {
-    background-color: var(--main-background-color);
+    background-color: var(--body-background-color);
 }
 
 
