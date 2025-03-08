@@ -1,16 +1,20 @@
 :root {
-    
-
     --project-figcaption-background: rgba(0, 0, 0, 0.6);
     --project-figcaption-text-color: white;
     --slider-controls-button-background: rgba(0, 0, 0, 0.5);
     --slider-controls-button-background-hover: rgba(0, 0, 0, 0.8);
     --slider-controls-button-text-color: #F2EDDC;
+    --index-background-color: #132640;
 }
 
 h1 {
     position: absolute;
     left: -100em;
+}
+
+
+body {
+    background-color: var(--index-background-color);
 }
 
 
