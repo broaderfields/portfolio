@@ -41,6 +41,17 @@ function applyFilter(filter) {
 
     // Scroll alleen naar de eerste zichtbare slide nadat het filter is toegepast
     scrollToSlide(0);
+
+    // Controleer of er maar één actief project is en het filter 'ux' is
+    const activeSlides = Array.from(slides).filter(slide => slide.classList.contains('active'));
+    if (activeSlides.length === 1) {
+        prevButton.style.display = 'none';
+        nextButton.style.display = 'none';
+    } else {
+        prevButton.style.display = 'block';
+        nextButton.style.display = 'block';
+    }
+
 }
 
 // Functie voor het instellen van de projecten bij het laden
@@ -114,3 +125,10 @@ function resetAutoSlide() {
         }
     }, 8000);
 }
+
+
+
+
+
+
+// Als er maar 1 project voor dit filter is 
