@@ -197,6 +197,7 @@ main button {
 
     text-align: center;
     text-decoration: none;
+    color: var(--text-color);
 
     transition: .2s;
     transition-delay: .3s;
@@ -213,15 +214,15 @@ main button.open {
 }
 
 main > section:nth-of-type(2) button, main > section:nth-of-type(4) button {
-    left: 6em;
+    left: 8em;
 }
 
 main > section:nth-of-type(3) button {
-    left: 10em;
+    left: 12em;
 }
 
 main > section:nth-of-type(5) button {
-    left: 8em;
+    left: 10em;
 }
 
 
