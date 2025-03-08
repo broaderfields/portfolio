@@ -1,0 +1,96 @@
+:root {
+    --text-color: #132640;
+}
+
+h1, h2, h3 {
+    text-align: center;
+    padding-top: 1.5em;
+}
+
+h1 {
+    font-size: 2.5em;
+}
+
+main > img:first-of-type {
+    display: block; /* Make the image a block element */
+    margin: 4em auto; /* Center the image */
+    width: 50%; /* Ensure the image is responsive */
+
+    border-radius: 50%;
+}
+
+
+
+
+p {
+    padding: .5em 1em;
+}
+
+main > section:first-of-type li{
+    list-style: none;
+    text-align: center;
+}
+
+main > section:first-of-type li p {
+    padding: .6em 0;
+}
+
+
+main section:has(svg) {
+    display: block;
+    margin: 0 auto;
+    width: 60%;
+}
+
+svg {
+    display: block;
+    width: 80%;
+    margin: 1em auto;
+    overflow: visible;
+}
+
+#textPath {
+    font-size: .27em;
+}
+
+@media screen and (min-width: 500px) {
+    main > section:first-of-type {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items:baseline;
+        padding: 0 1em;
+    }
+
+    p:not(main section li p) {
+        padding: .5em 4em;
+    }
+}
+
+@media screen and (min-width: 800px) {
+    p:not(main section li p) {
+        padding: .5em 15em;
+    }
+
+    main section:has(svg) {
+        width: 45%;
+    }
+
+    main > img:first-of-type {
+        width: 30%;
+    }
+}
+
+@media screen and (min-width: 1400px) {
+    p:not(main section li p) {
+        padding: .5em 30em;
+    }
+
+    main > img:first-of-type {
+        width: 20%;
+    }
+
+    main section:has(svg) {
+        width: 30%;
+    }
+}

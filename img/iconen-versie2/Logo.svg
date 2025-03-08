@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Laag_1" data-name="Laag 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+  <defs>
+    <style>
+      .cls-1 {
+        font-size: 104.77px;
+      }
+
+      .cls-1, .cls-2, .cls-3 {
+        fill: #f2eddc;
+        font-family: AzonixRegular, Azonix;
+        stroke: #f2eddc;
+        stroke-width: 9px;
+      }
+
+      .cls-1, .cls-2, .cls-3, .cls-4 {
+        stroke-miterlimit: 10;
+      }
+
+      .cls-2 {
+        font-size: 516.84px;
+      }
+
+      .cls-3 {
+        font-size: 516.84px;
+      }
+
+      .cls-4 {
+        fill: #132640;
+        stroke: #132640;
+        stroke-width: 40px;
+      }
+    </style>
+  </defs>
+  <circle class="cls-4" cx="500" cy="500" r="458.5"/>
+  <g>
+    <text class="cls-1" transform="translate(259.87 583.06)"><tspan x="0" y="0">V</tspan></text>
+    <text class="cls-1" transform="translate(347.87 583.06)"><tspan x="0" y="0">D</tspan></text>
+    <g>
+      <text class="cls-2" transform="translate(151.61 672.46)"><tspan x="0" y="0">L</tspan></text>
+      <text class="cls-3" transform="translate(513.44 743.6) rotate(-25)"><tspan x="0" y="0">G</tspan></text>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,209 @@
+:root {
+    
+
+    --project-figcaption-background: rgba(0, 0, 0, 0.6);
+    --project-figcaption-text-color: white;
+    --slider-controls-button-background: rgba(0, 0, 0, 0.5);
+    --slider-controls-button-background-hover: rgba(0, 0, 0, 0.8);
+    --slider-controls-button-text-color: #F2EDDC;
+}
+
+h1 {
+    position: absolute;
+    left: -100em;
+}
+
+
+
+
+
+
+
+
+
+
+/* Algemene stijl voor de slider */
+
+
+
+.project-slider {
+    position: relative;
+    width: 100%;
+    height: 80vh; /* Volledige hoogte van het scherm */
+    display: flex;
+    overflow-x: scroll; /* Horizontaal scrollen toestaan */
+    overflow-y: hidden; /* Verticaal scrollen blokkeren */
+    scroll-snap-type: x mandatory; /* Smooth scroll-effect */
+    scroll-behavior: smooth; /* Scrollen is vloeiend */
+    -webkit-overflow-scrolling: touch; /* Zorg ervoor dat het scrollen goed werkt op mobiele apparaten */
+}
+
+.project-slide {
+    flex: 0 0 100%; /* Elk project neemt 100% van de breedte in */
+    scroll-snap-align: start; /* Begint bij de rand van het scherm */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    height: 100%; 
+}
+
+.project-slide figure {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.project-slide img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Zorgt dat de afbeelding de ruimte vult zonder vervorming */
+}
+
+.project-slide figcaption {
+    position: absolute;
+    bottom: 0;
+    /* left: 5%; */
+    width: 100%;
+
+    color: var(--project-figcaption-text-color);
+    background: var(--project-figcaption-background); /* Achtergrond voor betere leesbaarheid */
+    padding: 1rem 2rem;
+    /* border-radius: 8px; */
+    text-align: left;
+}
+
+.project-slide h2 {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.project-slide p {
+    margin-top: 0.5rem;
+    font-size: 1rem;
+}
+
+
+
+
+
+/* Pas de algemene container van de scrollbar aan */
+.project-slider::-webkit-scrollbar {
+    width: 12px; /* Breedte van de verticale scrollbar */
+    height: 12px; /* Hoogte van de horizontale scrollbar */
+}
+
+/* Pas de scrollbar track (achtergrond) aan */
+.project-slider::-webkit-scrollbar-track {
+    background: var(--scrollbar-track-color); /* Achtergrondkleur van de track */
+}
+
+/* Pas het scrollbar duim-element (thumb) aan */
+.project-slider::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb-color); /* Kleur van de scrollbar */
+    border-radius: 6px; /* Ronde hoeken */
+}
+
+/* Pas de hover-stijl aan voor de scrollbar thumb */
+.project-slider::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-color-hover); /* Donkere kleur bij hover */
+}
+
+
+
+
+
+
+
+
+/* Navigatieknoppen */
+.slider-controls {
+    position: absolute;
+    top: 50%;
+    width: 90%;
+    left: 5%;
+
+    display: flex;
+    justify-content: space-between;
+    transform: translateY(-50%);
+    z-index: 10;
+    pointer-events: none; /* Knoppen hinderen niet de swipe-actie */
+}
+
+.slider-controls button {
+    background: var(--slider-controls-button-background);
+    color: var(--slider-controls-button-text-color);
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    pointer-events: all; /* Maak knoppen klikbaar */
+    padding: 10px 20px;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+}
+
+.slider-controls button:hover {
+    background: var(--slider-controls-button-background-hover);
+}
+
+
+
+
+@media (min-width: 500px) {
+    .widget {
+        top: 5em; 
+        left: 2em; 
+        transform: translateX(0);
+        
+        padding: 1rem; 
+        border-radius: 8px; /* Ronde hoeken */
+    }
+    
+    /* Stijl voor de knoppen in de widget */
+    .widget-option {
+        background: var(--widget-option-background); /* Witte achtergrond */
+        color: var(--widget-option-text-color); /* Donkere tekstkleur */
+        border: none; 
+        border-radius: 4px; /* Ronde hoeken */
+        padding: 0.5rem 1rem; 
+        font-size: 1em; 
+        cursor: pointer; /* Geef een klikbare cursor */
+    }
+
+
+
+    .project-slide figcaption {
+        position: absolute;
+        bottom: 10%;
+        left: 2em;
+
+        width: 60%;
+
+        color: var(--project-figcaption-text-color);
+        background: var(--project-figcaption-background); /* Achtergrond voor betere leesbaarheid */
+        padding: 1rem 2rem;
+        border-radius: 8px;
+        text-align: left;
+    }
+    
+    .project-slide h2 {
+        font-size: 2rem;
+        font-weight: bold;
+    }
+    
+    .project-slide p {
+        margin-top: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .slider-controls {
+        left: 2em;
+    }
+
+    .slider-controls button {
+        font-size: 1.5rem;
+        padding: 8px 16px;
+    }
+}
+

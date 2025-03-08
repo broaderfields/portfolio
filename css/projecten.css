@@ -1,0 +1,531 @@
+:root {
+    --h1-color: #F2EDDC;
+    --text-color: #132640;
+
+    --h1-background: rgba(0, 0, 0, 0.6);
+    --section-even-background: #ebe5cf;
+
+    --main-a-button-background: #132640;
+    --main-a-button-text: #F2EDDC;
+    --main-a-button-background-hover: #BFAC95;
+    --main-a-button-text-hover: #132640;
+
+    --widget-option-background: #BFAC95;
+
+    --code-background: #2d2d2d;
+    --code-text: #f8f8f2;
+    
+    --box-shadow: rgba(0, 0, 0, 0.1);
+}
+
+
+h1 {
+    color: var(--h1-color);
+    font-size: 3em;
+
+    text-align: center;
+
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--h1-background);
+    padding: .6em 0 .6em 0;
+    z-index: 1;
+
+    border-radius: 8px 8px 0 0;
+}
+
+h2, h3, main ul, main p, main section:not(:first-of-type) img{
+    padding: .5em 5% .5em 5%;
+}
+
+h3 {
+    text-decoration: underline;
+}
+
+h4 {
+    padding: 3em 5% .5em 5%;
+    text-align: center;
+    font-size: 1.2em;
+}
+
+h5 {
+    padding: 1em 5% .5em 5%;
+}
+
+
+
+
+
+
+
+
+
+
+main > img {
+    width: 100%;
+    height: auto;
+}
+
+main ul {
+    list-style: none;
+}
+
+
+main > section:first-of-type {
+    position: relative;
+    width: 100%;
+}
+
+main > section:first-of-type > img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+
+h2 {
+    padding-top: 1em;
+}
+
+main > section:nth-of-type(2), main > section:nth-of-type(4){
+    background-color: var(--section-even-background);
+}
+
+
+
+
+
+
+
+/* Statistieken grids */
+
+main  ul:first-of-type {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2em;
+    padding: 2em 0;
+}
+
+main ul:first-of-type li, main ul:nth-of-type(2) li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+main ul:first-of-type li img, main ul:nth-of-type(2) li img {
+    width: 3em;
+    height: 3em;
+    padding-bottom: 1em;
+}
+
+main ul:nth-of-type(2) {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3em;
+    padding: 2em 0;
+}
+
+main >section:not(:first-of-type) {
+    padding: 1em 0 1em 0;
+}
+
+.button-container {
+    float: right;
+    margin: 1em 5% 2em 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+/* Openen van details in de sections */
+
+main  >section:not(:first-of-type) {
+    transition:1s;
+	
+	overflow:hidden;
+
+    position: relative;
+}
+
+main > section:not(:first-of-type) > h3 {
+    display: block;
+}
+
+main > section:not(:first-of-type) > section {
+    transition:1s;
+    max-height: 0;
+    overflow: hidden;
+}
+
+main > section:not(:first-of-type) > section.open {
+    max-height: 1000em;
+    transition:1s;
+}
+
+
+
+
+
+/* Knoppen openen secties met details */
+
+main button {
+    background-color: transparent;
+    border: transparent;
+    border-radius: 50%;
+
+    width: 1em;
+
+    display: inline-flex;
+
+    position: absolute;
+    top: calc(2.5em);
+    left: 13em;
+
+    aspect-ratio: 1/1;
+
+    text-align: center;
+    text-decoration: none;
+
+    transition: .2s;
+    transition-delay: .3s;
+    transition-timing-function:ease-in;
+    transform-origin: center;
+}
+
+main button.open {
+    transform: rotate(90deg);
+    transition: .6s;
+    /* transition-delay: .3s; */
+    transition-timing-function:ease-in;
+    /* transition-delay: .4s; */
+}
+
+main > section:nth-of-type(2) button, main > section:nth-of-type(4) button {
+    left: 6em;
+}
+
+main > section:nth-of-type(3) button {
+    left: 10em;
+}
+
+main > section:nth-of-type(5) button {
+    left: 8em;
+}
+
+
+/* .widget {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+} */
+
+.widget.shown {
+    /* display: flex;
+    flex-direction: row; 
+    gap: 0.5rem;  */
+    
+    transition: all 0.3s ease; 
+
+    position: absolute;
+    top: 3.8em; 
+    right: 50%; 
+    transform: translateX(50%);
+    z-index: 1100;
+
+    /* font-size: 1.3em; */
+
+    /* width: 100%;  */
+    background-color: var(--widget-background);
+    box-shadow: 0 2px 4px var(--box-shadow);
+    padding: 1em;
+    border-radius: 8px;
+}
+
+
+.widget a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    gap: 0.5rem;
+
+    background: var(--widget-option-background);
+    color: var(--nav-section-a-text); 
+
+    border-radius: 4px; /* Ronde hoeken */
+    padding: 0.3em .7em; 
+    /* font-size: .9em;  */
+    cursor: pointer; /* Geef een klikbare cursor */
+    
+    transition: background 0.3s ease;
+    
+    text-decoration:underline;
+}
+
+.widget a:hover {
+    background: var(--nav-section-a-background-hover); 
+    color: var(--nav-section-a-text); 
+    transition: background 0.3s ease;
+}
+
+.widget img {
+    width: 1em;
+    height: 1em;
+}
+
+
+
+
+
+
+
+
+
+
+.code-container { 
+    max-width: 90%;
+    height: 20em; /* Set your desired height */
+    overflow-y: auto; /* Enable vertical scrolling */
+
+
+    margin: auto;
+    margin-bottom: 2em;
+    background: var(--code-background);
+    color: var(--code-text);
+    border-radius: 8px;
+    padding: 1em;
+    overflow-x: auto;
+    box-shadow: 0 4px 6px var(--box-shadow);
+}
+
+.code-container pre {
+    margin: 0;
+    white-space: pre-wrap; /* Wrap long lines */
+    word-break: break-word; /* Break long words */
+    font-family: "Courier New", Courier, monospace;
+    line-height: 1.5;
+}
+
+.code-container::-webkit-scrollbar {
+    height: 8px;
+}
+
+.code-container::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 4px;
+}
+
+.code-container::-webkit-scrollbar-thumb:hover {
+    background: #333;
+}
+
+
+
+
+
+
+main section img {
+    width:50%;
+    margin: 0 auto;
+    display: block;
+}
+
+
+main section video {
+    width:90%;
+    height: auto;
+
+    margin: 0 auto;
+
+    display: block;
+
+    border-radius: 8px;
+    box-shadow: 0 4px 8px var(--box-shadow);
+}
+
+/* Elke p na een video  */
+video + p {
+    padding-top: 2em;
+}
+
+iframe {
+    width: 100%;
+    height: auto;
+}
+
+
+
+
+
+footer {
+    padding-top: 5em;
+}
+
+
+
+
+
+
+
+
+@media screen and (min-width: 500px) {
+    main section img {
+        padding: 0;
+    }
+
+    main > ul:first-of-type,
+    main > ul:nth-of-type(2) {
+        width: 60%;
+        margin: 0 auto;
+        padding: 1em 0;
+    }
+
+    main > section:not(:first-of-type) p, main > section:not(:first-of-type) video, h2, h3, h4, h5, .code-container, main > section:not(:first-of-type) ul, main > section:not(:first-of-type) ol{
+        width: 60%;
+        margin: 0 auto;
+        padding-left: 0;
+    }
+
+    /* main section:not(:first-of-type) img {
+        width: 40%;
+        margin-left: 20%;
+    } */
+
+    main > section:not(:first-of-type) ol li p {
+        width: 60%;
+    }
+
+
+
+    main > section:nth-of-type(2) button, main > section:nth-of-type(4) button {
+        left: 20em;
+    }
+    
+    main > section:nth-of-type(3) button {
+        left: 26em;
+    }
+    
+    main > section:nth-of-type(5) button {
+        left: 22em;
+    }
+
+}
+
+@media screen and (min-width: 800px) {
+    /* Responsive knoppen om section te openen */
+    main > section:nth-of-type(2) button, main > section:nth-of-type(4) button {
+        left: 18em;
+    }
+    
+    main > section:nth-of-type(3) button {
+        left: 22em;
+    }
+    
+    main > section:nth-of-type(5) button {
+        left: 20em;
+    }
+
+    /* main > section:nth-of-type(4) > section {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center; 
+    } */
+
+    /* main > section:nth-of-type(4) section img {
+        order: -1;
+        width: 20%;
+        margin-left: 20%;
+    }
+
+    main > section:nth-of-type(4) section p {
+        width: 20%; 
+        margin: 0 20% 0 0;
+        padding: 0 5% .5em 1em;
+    } */
+
+    video {
+        max-height: 30em;
+    }
+
+}
+
+@media screen and (min-width: 900px) {
+    /* Responsive knoppen om section te openen */
+    main > section:nth-of-type(2) button, main > section:nth-of-type(4) button {
+        left: 26em;
+    }
+    
+    main > section:nth-of-type(3) button {
+        left: 28em;
+    }
+    
+    main > section:nth-of-type(5) button {
+        left: 27em;
+    }
+
+    main > section:first-of-type img {
+        height: 25em;
+        object-fit: cover;
+        object-position: center;
+    }
+}
+
+@media screen and (min-width: 1400px) {
+    main > section:not(:first-of-type) p, main > section:not(:first-of-type) video, h2, h3, h4, h5, .code-container, main > section:not(:first-of-type) ul, main > section:not(:first-of-type) ol, main > ul:first-of-type, main > ul:nth-of-type(2){  
+        width: 40%;
+        margin: 0 auto;
+        padding-left: 0;
+    }
+
+    main section:not(:first-of-type) img {
+        width: 20%;
+        margin-left: 30%;
+    }
+
+
+    /* Responsive knoppen om section te openen */
+    /* main > ul:first-of-type, main > ul:nth-of-type(2) {
+        padding: 1em 0;
+    } */
+
+    main > section:nth-of-type(2) button, main > section:nth-of-type(4) button {
+        left: 40em;
+    }
+    
+    main > section:nth-of-type(3) button {
+        left: 45em;
+    }
+    
+    main > section:nth-of-type(5) button {
+        left: 42em;
+    }
+
+}
+
+@media screen and (min-width: 1600px) {
+    /* Responsive knoppen om section te openen */
+    main > section:nth-of-type(2) button, main > section:nth-of-type(4) button {
+        left: 50em;
+    }
+    
+    main > section:nth-of-type(3) button {
+        left: 55em;
+    }
+    
+    main > section:nth-of-type(5) button {
+        left: 52em;
+    }
+}

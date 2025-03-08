@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <title>Bullseye - LVDG</title>
+
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" type="text/css" href="../css/style.css">
+    <link rel="stylesheet" type="text/css" href="../css/projecten.css">
+    <link rel="icon" type="image/x-icon" href="../img/iconen-versie2/Logo.svg">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+
+<body>
+    <header>
+        <nav>
+            <a href="../index.html">LVDG</a>
+            <ul>
+                <li>
+                    <a href="./over-mij.html">Over mij</a>
+                </li>
+                <li>
+                    <button>Contact</button>
+                    <ul>
+                        <li>
+                            <a href="https://www.linkedin.com/in/laura-van-der-gragt/" target="_blank">LinkedIn</a>    
+                        </li>
+                        <li>
+                            <a href= "mailto: vandergragtlaura@gmail.com"> vandergragtlaura@gmail.com</a>    
+                        </li>
+                    </ul>
+                </li>
+            </ul>   
+        </nav>
+    </header>
+
+    <main>
+        
+        <section>
+            <img src="../img/Bullseye/Erika-shot.png" alt="Afbeelding van Bullseye in VR">
+            <h1>Bullseye</h1>
+        </section>
+
+        <h2>Bullseye is mijn passieproject in VR die ik voor de minor Immersive Environments heb gemaakt. Ik wilde een challenge, die ik mijzelf zeker gegeven heb en voltooid heb.</h2>
+
+        <!-- Informatie case zoals tijd, wanneer en welke rol -->
+        <ul>
+            <li>
+                <img src="../img/iconen-versie2/Klok.svg" alt="klok icoon">
+                <p>6-7 weken</p>
+            </li>
+            <li>
+                <img src="../img/iconen-versie2/Kalender.svg" alt="kalender icoon">
+                <p>November 2024 - Januari 2025</p>
+            </li>
+            <li>
+                <img src="../img/iconen-versie2/Persoon.svg" alt="persoon icoon">
+                <p>Ontwerper & developer</p>
+            </li>
+        </ul>
+
+        <section>
+            <h3>Goals</h3>
+            <button>&#10095;</button>
+
+            <section>
+                <p>Mijn doel was om een werkend VR-spel te bouwen en om nieuwe dingen te leren, wat ook een persoonlijk leerdoel van mij is. Ik vond het belangrijk dat het spel ook daadwerkelijk werkte en een uitdaging was voor de spelers.</p>
+            </section>
+
+        </section>
+
+        <section>
+            <h3>Technologieën</h3>
+            <button>&#10095;</button>
+
+            <section>
+                <p>Voor het maken van Bullseye heb ik gebruik gemaakt van Unity en C#. Voor dit project had ik geen enkele ervaring in beide, dus was het een echte challenge om dit aan te leren. Mijn voorkennis in JavaScript hielp gelukkig wel om het wat makkelijker te maken.</p>
+
+                <h4>Het wapen</h4>
+                <p>Voor het wapen schiet je bullet prefabs vanuit een firepoint GameObject die op het wapen gezet is. Als alle condities juist zijn, dus de trigger is ingedrukt, je houdt het wapen vast en je kan schieten, vuurt de kogel zichzelf af. ShootCooldown is om ervoor te zorgen dat je niet de knop ingedrukt kan houden en de kogels blijven afschieten. Hierdoor is het dus nodig om de trigger los te laten en na .5 seconden kan je opnieuw schieten. Als je schiet, hoor je ook het wapen een kogel afvuren als je schiet, dit geeft auditieve confirmatie dat er iets gebeurd bij je actie.</p>
+                <h5>GunShoot.cs</h5>
+                <section class="code-container">
+                    <pre><code>
+                        using UnityEngine;
+                        using UnityEngine.InputSystem;
+                        using UnityEngine.XR.Interaction.Toolkit;
+                        using System.Collections;
+                        
+                        public class GunShoot : MonoBehaviour
+                        {
+                            public GameObject bulletPrefab;
+                            public Transform firePoint;
+                            public float bulletSpeed = 20f;
+                        
+                            // Input actions
+                            public InputActionAsset inputActions;
+                            public string actionMapName = "Player";
+                            public string actionName = "Fire"; 
+                        
+                            private InputActionProperty triggerAction; // Added this field
+                            private UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable grabInteractable;
+                        
+                            private bool isHoldingGun = false;
+                            private bool canShoot = true;
+                            public float shootCooldown = 0.5f;
+                        
+                            private Rigidbody gunRigidbody;
+                        
+                            public Transform gripPoint; // Reference to the predefined grip point on the gun
+                            public AudioSource audioSource;
+                            public AudioClip shootClip;
+                        
+                            private void Awake()
+                            {
+                                // Assign the trigger action programmatically
+                                var actionMap = inputActions.FindActionMap(actionMapName, true);
+                                var fireAction = actionMap.FindAction(actionName, true);
+                                triggerAction = new InputActionProperty(fireAction);
+                        
+                                // Get the Rigidbody and XRGrabInteractable components
+                                gunRigidbody = GetComponent<Rigidbody>();
+                                grabInteractable = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>();
+                        
+                                // Set the attach transform to the grip point
+                                if (gripPoint != null)
+                                {
+                                    grabInteractable.attachTransform = gripPoint;
+                                }
+                        
+                                // Add listeners for grabbing and releasing
+                                grabInteractable.selectEntered.AddListener(OnGrabbed);
+                                grabInteractable.selectExited.AddListener(OnReleased);
+                            }
+                        
+                            private void OnGrabbed(SelectEnterEventArgs args)
+                            {
+                                isHoldingGun = true;
+                        
+                                // Disable physics when the gun is grabbed
+                                if (gunRigidbody != null)
+                                {
+                                    gunRigidbody.isKinematic = true;
+                                }
+                        
+                                // Ensure the gun aligns with the attach transform
+                                AlignToGripPoint();
+                            }
+                        
+                            private void OnReleased(SelectExitEventArgs args)
+                            {
+                                if (!args.isCanceled)
+                                {
+                                    isHoldingGun = false;
+                        
+                                    // Re-enable physics when the gun is released
+                                    if (gunRigidbody != null)
+                                    {
+                                        gunRigidbody.isKinematic = false;
+                                    }
+                                }
+                            }
+                        
+                            private void AlignToGripPoint()
+                            {
+                                // Align the gun's position and rotation with the grip point
+                                if (gripPoint != null)
+                                {
+                                    transform.position = gripPoint.position;
+                                    transform.rotation = gripPoint.rotation;
+                                }
+                            }
+                        
+                            private void OnEnable()
+                            {
+                                triggerAction.action.Enable();
+                            }
+                        
+                            private void OnDisable()
+                            {
+                                triggerAction.action.Disable();
+                            }
+                        
+                            void Update()
+                            {
+                                // Check for trigger press and shooting conditions
+                                if (triggerAction.action.WasPressedThisFrame() && isHoldingGun && canShoot)
+                                {
+                                    ShootBullet();
+                                    StartCoroutine(ShootCooldown());
+                                }
+                            }
+                        
+                            void ShootBullet()
+                            {
+                                // Instantiate and shoot the bullet
+                                GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+                                Rigidbody rb = bullet.GetComponent<Rigidbody>();
+                                if (rb != null)
+                                {
+                                    rb.AddForce(firePoint.forward * bulletSpeed, ForceMode.VelocityChange);
+                                }
+                        
+                                // Play the shooting sound
+                                if (audioSource != null && shootClip != null)
+                                {
+                                    audioSource.PlayOneShot(shootClip);
+                                }
+                            }
+                        
+                            private IEnumerator ShootCooldown()
+                            {
+                                canShoot = false;
+                                yield return new WaitForSeconds(shootCooldown);
+                                canShoot = true;
+                            }
+                        }
+                        
+                    </code></pre>
+                </section>
+
+                <p>Het kogelscript is voor de snelheid van de kogel en hoe deze vooruit beweegt en stopt. Hij wordt in het bewegende target vernietigd bij collisie.</p>
+                <h5>Bullet.cs</h5>
+                <section class="code-container">
+                    <pre><code>
+                        using UnityEngine;
+
+                        public class Bullet : MonoBehaviour
+                        {
+                            public float speed = 20f;
+
+                            void Update()
+                            {
+                                // Move the bullet forward
+                                transform.Translate(Vector3.forward * speed * Time.deltaTime);
+                            }
+
+                            void OnCollisionEnter(Collision collision)
+                            {
+                                // Stop the bullet's movement
+                                GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
+                                GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+
+                                // The bullet will be destroyed in the Target script
+                            }
+                        }
+                    </code></pre>  
+                </section>  
+
+                <h4>De targets</h4>
+                <p>In totaal zijn er 7 targets over het spel verspreid. Zes hiervan zijn in het daadwerkelijke spel. Na een delay worden ze zichtbaar en komen ze op je af rennen of schieten ze een pijl op je af. De boogschutter, Erika, heeft een vaste positie waar ze heen moet gaan. Als het target die gaat bewegen dus niet Erika is, is punt B waar ze heen bewegen de positie van de speler.</p>
+                <h5>MovingTarget.cs</h5>
+                <section class="code-container">
+                    <pre><code>
+                        using UnityEngine;
+                        using System.Collections;
+
+                        public class MovingTargetWithAnimation : MonoBehaviour
+                        {
+                            public Vector3 pointA; // Start position
+                            public Vector3 pointB; // End position
+                            public float speed = 2f; // Speed of movement
+                            public float startDelay = 5f; // Delay before movement starts
+                            public float extraDelay = 2f; // Animation Kachujin delay
+
+                            private AudioSource audioSource;
+
+                            public AudioClip destroyAudioClip; // Audio clip to play before destruction
+                            public float destroyAudioVolume = 0.7f; // Volume for the destruction audio (0 to 1)
+                            public float destroyAudioPitch = 1.0f; // Pitch for the destruction audio (default is 1)
+
+                            public AudioClip preDelayAudio; // Audio to play before movement starts
+                            public float preAudioVolume = 0.5f; // Volume for pre-delay audio (0 to 1)
+                            public float preAudioPitch = 1.2f; // Pitch for pre-delay audio (default is 1)
+
+                            public Transform playerTransform;
+
+
+                            private Animator animator;
+                            private bool movingToB = false;
+                            private bool isDestroying = false;
+
+                            [SerializeField] private QuickMeshToggle quickMeshToggle; // Reference to the visibility script
+
+                            private KachujinHandler kachujinHandler;
+                            private EmandorHandler emandorHandler;
+
+                            void Start()
+                            {
+                                animator = GetComponent<Animator>();
+                                audioSource = GetComponent<AudioSource>();
+
+                                GameObject player = GameObject.FindGameObjectWithTag("Player");
+                                if (player != null)
+                                {
+                                    playerTransform = player.transform;
+                                }
+                                else
+                                {
+                                    Debug.LogError("Player not found! Make sure the player GameObject has the 'Player' tag.");
+                                }
+
+                                // Initialize the KachujinHandler (if the component is on the same GameObject)
+                                kachujinHandler = GetComponent<KachujinHandler>();
+                                if (kachujinHandler != null)
+                                {
+                                    kachujinHandler.animator = animator;
+                                    kachujinHandler.quickMeshToggle = quickMeshToggle;
+                                    kachujinHandler.extraDelay = extraDelay;
+                                }
+                                else
+                                {
+                                    Debug.LogError("KachujinHandler component not found on this GameObject!");
+                                }
+
+
+
+                                emandorHandler = GetComponent<EmandorHandler>();
+                                if (emandorHandler != null)
+                                {
+                                    emandorHandler.animator = animator;
+                                    emandorHandler.quickMeshToggle = quickMeshToggle;
+                                    emandorHandler.extraDelay = extraDelay;
+                                }
+                                else
+                                {
+                                    Debug.LogError("EmandorHandler component not found on this GameObject!");
+                                }
+
+                                StartCoroutine(StartMovementSequence());
+                            }
+
+                            private IEnumerator StartMovementSequence()
+                            {
+                                GameObject target = GameObject.FindWithTag("Target");
+
+                                // Wait for the initial start delay
+                                yield return new WaitForSeconds(startDelay);
+
+
+                                // Play the pre-audio after the delay
+                                if (audioSource != null && preDelayAudio != null)
+                                {
+                                    audioSource.clip = preDelayAudio;
+                                    audioSource.volume = preAudioVolume;
+                                    audioSource.pitch = preAudioPitch;
+                                    audioSource.loop = false;
+                                    audioSource.Play();
+
+                                    // Wait for the pre-audio to finish
+                                    yield return new WaitForSeconds(preDelayAudio.length);
+                                }
+
+                                if (target != null)
+                                {
+                                    Debug.Log($"Target found: {target.name}, Tag: {target.tag}");
+                                }
+                                else
+                                {
+                                    Debug.Log("No target found with tag 'Target'.");
+                                }
+
+                                if (kachujinHandler != null)
+                                {
+                                    yield return StartCoroutine(kachujinHandler.HandleKachujin());
+                                }
+
+                                if (emandorHandler != null)
+                                {
+                                    yield return StartCoroutine(emandorHandler.HandleEmandor());
+                                }
+
+
+                                // Enable movement
+                                movingToB = true;
+                                Debug.Log(movingToB);
+
+                                if (movingToB && quickMeshToggle != null && kachujinHandler == null && emandorHandler == null)
+                                {
+                                    Debug.Log("Toggling visibility via QuickMeshToggle...");
+                                    quickMeshToggle.ToggleVisibility();
+                                }
+                                else if (quickMeshToggle == null)
+                                {
+                                    Debug.LogWarning("QuickMeshToggle reference is missing in the MovementController! Or it's Kachujin");
+                                }
+                            }
+
+                            void Update()
+                            {
+                                if (isDestroying) return; // Skip movement logic if in destruction sequence
+
+
+                                GameObject erika = GameObject.Find("Erika");
+                                if (playerTransform != null)
+                                {
+                                    Debug.LogWarning("PlayerTransform found");
+                                    Vector3 playerPosition = playerTransform.position;
+
+                                    if (movingToB == true && gameObject.name != "Erika")
+                                    {
+                                        Debug.LogWarning("Non-Erika target is moving to player");
+                                        transform.position = Vector3.MoveTowards(transform.position, playerPosition, speed * Time.deltaTime);
+                                        animator.SetTrigger("StartRoll");
+                                        animator.SetTrigger("StartSprint");
+
+                                        if (audioSource != null)
+                                        {
+                                            audioSource.clip = null;
+                                            audioSource.loop = true;
+                                            audioSource.volume = 1.0f;
+                                            audioSource.pitch = 1.0f;
+                                            audioSource.Play();
+                                        }
+
+                                        if (transform.position == playerPosition)
+                                        {
+                                            movingToB = false;
+
+                                            if (audioSource != null && audioSource.isPlaying)
+                                            {
+                                                audioSource.Stop();
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    Debug.LogWarning("PlayerTransform is not assigned or Player not found.");
+                                }
+
+
+                            
+                                if (erika == null)
+                                {
+                                    Debug.Log("Erika is no longer in the scene. Destroying associated arrows.");
+                                    GameObject[] arrows = GameObject.FindGameObjectsWithTag("Arrow");
+                                    foreach (GameObject arrow in arrows)
+                                    {
+                                        Destroy(arrow);
+                                    }
+                                }
+
+
+                                // Erika moving
+                                if (gameObject.name == "Erika" && movingToB == true)
+                                {
+                                    Debug.LogWarning("movingToB is true and I am Erika");
+                                    transform.position = Vector3.MoveTowards(transform.position, pointB, speed * Time.deltaTime);
+                                    animator.SetTrigger("StartRoll");
+
+                                    if (audioSource != null)
+                                    {
+                                        audioSource.clip = null;
+                                        audioSource.loop = true;
+                                        audioSource.volume = 1.0f;
+                                        audioSource.pitch = 1.0f;
+                                        audioSource.Play();
+                                    }
+
+                                    if (transform.position == pointB)
+                                    {
+                                        movingToB = false;
+
+                                        if (audioSource != null && audioSource.isPlaying)
+                                        {
+                                            audioSource.Stop();
+                                        }
+                                    }
+                                }
+
+                                if (erika == null)
+                                {
+                                    Debug.Log("Erika is no longer in the scene. Destroying associated arrows.");
+                                    GameObject[] arrows = GameObject.FindGameObjectsWithTag("Arrow");
+                                    foreach (GameObject arrow in arrows)
+                                    {
+                                        Destroy(arrow);
+                                    }
+                                }
+                            }
+
+                            void OnTriggerEnter(Collider collision)
+                            {
+                                Debug.Log($"OnTriggerEnter called with collision: {collision.gameObject.name}");
+
+                                // Check if the target is currently visible
+                                if (quickMeshToggle != null && !quickMeshToggle.IsVisible())
+                                {
+                                    Debug.Log("Target hit, but the mesh is not visible. Ignoring hit.");
+                                    return; // Exit if the mesh is not visible
+                                }
+
+                                // Check if the collided object has the "Gun" tag
+                                if (collision.CompareTag("Gun"))
+                                {
+                                    Debug.Log("Collision detected with a Gun. Object will not be destroyed.");
+                                    return; // Exit the method without proceeding further
+                                } 
+                                else
+                                {
+                                    Debug.Log("Collision detected is not a Gun. Object will be destroyed.");
+                                }
+
+                                if (collision.CompareTag("Player"))
+                                {
+                                    Debug.Log("Collision detected with Player.");
+                                }
+
+                                movingToB = false; // Stop movement immediately
+                                StartCoroutine(DestroyWithDelay()); 
+                            }
+
+                            IEnumerator DestroyWithDelay()
+                            {
+                                Debug.Log($"Starting DestroyWithDelay coroutine for object: {gameObject.name}");
+                                movingToB = false;
+                                animator.SetTrigger("StartHit");
+
+                                isDestroying = true;
+
+                                // Play the destroy audio
+                                if (audioSource != null && destroyAudioClip != null)
+                                {
+                                    audioSource.clip = destroyAudioClip;
+                                    audioSource.volume = destroyAudioVolume;
+                                    audioSource.pitch = destroyAudioPitch;
+                                    audioSource.loop = false;
+                                    audioSource.Play();
+
+                                    // Wait for the audio to finish playing before continuing
+                                    yield return new WaitForSeconds(destroyAudioClip.length);
+                                }
+
+                                Destroy(gameObject);
+
+
+                                GameObject[] targets = GameObject.FindGameObjectsWithTag("Target");
+                                if (targets.Length == 0)
+                                {
+                                    Debug.LogWarning("No objects with the 'Target' tag found. Are they tagged correctly?");
+                                    yield break;
+                                }
+                                
+                                Debug.Log("Completed DestroyWithDelay coroutine.");
+                            }
+                        }
+
+                    </code></pre>
+                </section>
+
+                <p>Er zijn twee targets die eerst een andere state hebben voor ze op je af horen te komen. Kachujin doet eerst een soort dans voor ze op je af komt rennen en Emandor springt eerst van de eerste verdieping af voor hij gaat rennen. Deze hebben een apart script dat wordt aangeroepen om ervoor te zorgen dat ze eerst deze beweging afronden.</p>
+                <h5>EmandorHandler.cs en KahchujinHandler.cs</h5>
+                <section class="code-container">
+                    <pre><code>
+                        using UnityEngine;
+                        using System.Collections;
+
+                        public class EmandorHandler : MonoBehaviour
+                        {
+                            public Animator animator; // Reference to the animator
+                            public QuickMeshToggle quickMeshToggle; // Reference to the QuickMeshToggle
+                            public float extraDelay = 2f; // Delay for animation
+
+                            private GameObject emandor;
+
+                            void Start()
+                            {
+                                // Find Emandor in the scene
+                                emandor = GameObject.Find("Emandor");
+                                if (emandor != null)
+                                {
+                                    Debug.Log("Emandor found!");
+                                }
+                                else
+                                {
+                                    Debug.LogWarning("Emandor not found in the scene.");
+                                }
+                            }
+
+                            public IEnumerator HandleEmandor()
+                            {
+                                if (emandor != null)
+                                {
+                                    Debug.Log("Target is Emandor. Waiting for animation to complete before moving.");
+
+                                    // Play the specific animation
+                                    if (animator != null)
+                                    {
+                                        animator.SetTrigger("JumpDown");
+                                    }
+                                    else
+                                    {
+                                        Debug.LogWarning("Animator is not assigned.");
+                                    }
+
+                                    if (quickMeshToggle != null)
+                                    {
+                                        Debug.Log("Toggling visibility in Emandor");
+                                        quickMeshToggle.ToggleVisibility();
+                                    }
+                                    else
+                                    {
+                                        Debug.LogWarning("QuickMeshToggle reference is missing.");
+                                    }
+
+                                    yield return new WaitForSeconds(extraDelay);
+                                }
+                                else
+                                {
+                                    Debug.Log("Emandor not found. Skipping Emandor handling.");
+                                }
+                            }
+                        }
+
+                    </code></pre>
+                </section>
+
+                <p>Na de delay voorbij is, wordt de mesh van het target op visible gezet, waardoor het target te zien is. Deze meshes worden aan ieder target toegevoegd in de inspector in Unity. Daarna wordt dit script aangeroepen in het <i>MovingTarget.cs</i> script.</p>
+                <h5>QuickMeshToggle.cs</h5>
+                <section class="code-container">
+                    <pre><code>
+                        using UnityEngine;
+
+                        public class QuickMeshToggle : MonoBehaviour
+                        {
+                            [SerializeField] private SkinnedMeshRenderer[] skinnedMeshRenderers; // Array of Skinned Mesh Renderers
+
+                            private void Awake()
+                            {
+                                // Start all meshes invisible
+                                if (skinnedMeshRenderers != null && skinnedMeshRenderers.Length > 0)
+                                {
+                                    foreach (var renderer in skinnedMeshRenderers)
+                                    {
+                                        if (renderer != null)
+                                        {
+                                            renderer.enabled = false;
+                                        }
+                                    }
+                                    Debug.Log("All Skinned Mesh Renderers set to INVISIBLE at start.");
+                                }
+                                else
+                                {
+                                    Debug.LogWarning("No Skinned Mesh Renderers assigned in QuickMeshToggle!");
+                                }
+                            }
+
+                            // Method to make all meshes visible
+                            public void MakeVisible()
+                            {
+                                if (skinnedMeshRenderers != null && skinnedMeshRenderers.Length > 0)
+                                {
+                                    foreach (var renderer in skinnedMeshRenderers)
+                                    {
+                                        if (renderer != null)
+                                        {
+                                            renderer.enabled = true;
+                                        }
+                                    }
+                                    Debug.Log("All Skinned Mesh Renderers are now VISIBLE.");
+                                }
+                                else
+                                {
+                                    Debug.LogWarning("No Skinned Mesh Renderers assigned to make visible!");
+                                }
+                            }
+
+                            // Optional method to toggle visibility for all meshes
+                            public void ToggleVisibility()
+                            {
+                                if (skinnedMeshRenderers != null && skinnedMeshRenderers.Length > 0)
+                                {
+                                    foreach (var renderer in skinnedMeshRenderers)
+                                    {
+                                        if (renderer != null)
+                                        {
+                                            renderer.enabled = !renderer.enabled;
+                                            Debug.Log($"Toggled visibility of {renderer.gameObject.name} to {(renderer.enabled ? "VISIBLE" : "INVISIBLE")}");
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    Debug.LogWarning("No Skinned Mesh Renderers assigned to toggle visibility!");
+                                }
+                            }
+
+                            // Method to check if any mesh is visible
+                            public bool IsVisible()
+                            {
+                                if (skinnedMeshRenderers != null && skinnedMeshRenderers.Length > 0)
+                                {
+                                    foreach (var renderer in skinnedMeshRenderers)
+                                    {
+                                        if (renderer != null && renderer.enabled)
+                                        {
+                                            return true; // At least one mesh is visible
+                                        }
+                                    }
+                                }
+                                return false; // No meshes are visible
+                            }
+
+                        }
+
+                    </code></pre>
+                </section>
+
+                <p>Alle targets, behalve Erika, krijgen hun delay van een lijst met delays, zodat geen enkel spel hetzelfde is. Omdat Erika een pijl heeft die een aparte delay heeft, staat haar delay wel vast. Als ik meer tijd had gehad, had ik dit het liefst nog opgelost.</p>
+                <h5>MovingTargetArray.cs</h5>
+                <section class="code-container">
+                    <pre><code>
+                        using UnityEngine;
+
+                        public class MovingTargetArray : MonoBehaviour
+                        {
+                            public GameObject[] targets; // Array of targets
+                            public float[] delays = { 5f, 20f, 35f, 50f, 65f, 80f }; // Array of delays
+
+                            void Awake()
+                            {
+                                // Find all objects tagged as "Target"
+                                GameObject[] allTargets = GameObject.FindGameObjectsWithTag("Target");
+                                // Filter out the target named "Erika"
+                                targets = System.Array.FindAll(allTargets, target => target.name != "Erika");
+
+                                Debug.Log($"Found {targets.Length} targets with the 'Target' tag, excluding Erika.");
+                            }
+
+                            void Start()
+                            {
+                                // Shuffle the delays array to randomize the order
+                                ShuffleArray(delays);
+                                Debug.Log("Shuffled Delays Array: " + string.Join(", ", delays));
+
+                                // Assign delays to the targets
+                                for (int i = 0; i < targets.Length; i++)
+                                {
+                                    if (i < delays.Length)
+                                    {
+                                        MovingTargetWithAnimation targetScript = targets[i].GetComponent<MovingTargetWithAnimation>();
+                                        if (targetScript != null)
+                                        {
+                                            targetScript.startDelay = delays[i]; // Assign the delay
+                                            Debug.Log($"Assigned delay {delays[i]} to target {targets[i].name}");
+                                        }
+                                        else
+                                        {
+                                            Debug.LogWarning($"Target {targets[i].name} does not have a MovingTargetWithAnimation component.");
+                                        }
+                                    }
+                                    else
+                                    {
+                                        Debug.LogWarning("Not enough delays in the array to assign to all targets.");
+                                        break;
+                                    }
+                                }
+                            }
+
+                            // Method to shuffle an array
+                            private void ShuffleArray(float[] array)
+                            {
+                                for (int i = array.Length - 1; i > 0; i--)
+                                {
+                                    int randomIndex = Random.Range(0, i + 1);
+                                    float temp = array[i];
+                                    array[i] = array[randomIndex];
+                                    array[randomIndex] = temp;
+                                }
+                            }
+                        }
+
+                    </code></pre>
+                </section>
+                <p>In de tutorial is nog een aparte target met zijn eigen script, Roberto. Hij hoort alleen een animatie af te spelen en neergeschoten te kunnen worden, in plaats van dat hij ook rondbeweegt.</p>
+
+                <h4>Gewonnen of verloren</h4>
+                <p>Als er een object met de tag <i>Target</i> of <i>Arrow</i> met de speler collide, is het spel verloren. De functies HandleGameLost en DestroyAllTargets worden dan aangeroepen in de <i>WinScenario-PlayerCollision.cs</i>. <i>LoseScenario-PlayerCollision.cs</i> is vooral om de loseUI weer te geven, die laat zien aan de speler dat het spel verloren is.</p>
+                <h5>LoseScenario-PlayerCollision.cs</h5>
+                <section class="code-container">
+                    <pre><code>
+                        using UnityEngine;
+
+                        public class PlayerCollision : MonoBehaviour
+                        {
+                            public GameObject loseUI;
+
+                            public AudioClip loseAudioClip; // Assign the audio clip in the Inspector
+                            private AudioSource audioSource;
+
+                            void Start()
+                            {
+                                // Ensure the Lose UI is hidden at the start
+                                if (loseUI != null)
+                                {
+                                    loseUI.SetActive(false);
+                                    Debug.Log("Lose UI is hidden at the start.");
+                                }
+                                else
+                                {
+                                    Debug.LogWarning("Lose UI is not assigned in the Inspector.");
+                                }
+
+                                // Set up the AudioSource
+                                audioSource = gameObject.AddComponent<AudioSource>();
+                                if (loseAudioClip != null)
+                                {
+                                    audioSource.clip = loseAudioClip;
+                                    Debug.Log("Lose audio clip assigned.");
+                                }
+                                else
+                                {
+                                    Debug.LogWarning("Lose audio clip not assigned in the Inspector.");
+                                }
+                            }
+
+                            void OnTriggerEnter(Collider other)
+                            {
+                                // Check for collision with objects tagged as "Target"
+                                if (other.CompareTag("Target") || other.CompareTag("Arrow"))
+                                {
+                                    Debug.Log("Collision with Target detected. Game lost.");
+
+                                    // Handle the lose scenario
+                                    GameWinController winController = Object.FindAnyObjectByType<GameWinController>();
+                                    if (winController != null)
+                                    {
+                                        winController.HandleGameLost(); // Mark the game as lost
+                                        winController.DestroyAllTargets();
+                                    }
+                                    else
+                                    {
+                                        Debug.LogWarning("GameWinController not found in the scene.");
+                                    }
+
+                                    if (audioSource != null && loseAudioClip != null)
+                                    {
+                                        audioSource.Play();
+                                        Debug.Log("Lose audio played.");
+                                    }
+
+                                    // Activate the Lose UI
+                                    if (loseUI != null)
+                                    {
+                                        
+                                        loseUI.SetActive(true);
+                                        Debug.Log("Lose UI activated.");
+
+                                        loseUI.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 2f;
+                                        loseUI.transform.LookAt(Camera.main.transform);
+                                        loseUI.transform.Rotate(0, 180, 0);
+                                    }
+                                }
+                            }
+
+
+                            
+                        }
+
+                    </code></pre>
+                </section>
+
+                <p>Als de game nog niet gewonnen of verloren is, kijkt de <i>CheckWinCondition</i> hoeveel targets nog in het spel zijn. Als er geen targets meer zijn en de game is nog niet verloren of gewonnen, is het spel gewonnen. Dan wordt de winUI laten zien en worden alle targets vernietigd met <i>DestroyAllTargets</i>.</p>
+                <h5>WinScenario-PlayerCollision.cs</h5>
+                <section class="code-container">
+                    <pre><code>
+                        using UnityEngine;
+
+                        public class GameWinController : MonoBehaviour
+                        {
+                            public GameObject winningUI;
+                            public bool isGameLost = false; // Flag to track if the game is lost
+
+                            public AudioClip winAudioClip; // Audio clip to play when the game is won
+                            public float winAudioVolume = 1.0f; // Volume for the win audio (0 to 1)
+
+                            bool hasWon = false; // Flag to track if the game has been won
+
+                            private AudioSource audioSource; // Reference to the audio source   
+
+                            void Start()
+                            {
+                                if (winningUI != null)
+                                {
+                                    winningUI.SetActive(false);
+                                    Debug.Log("Winning UI is hidden at the start.");
+                                }
+                                else
+                                {
+                                    Debug.LogWarning("Winning UI is not assigned in the Inspector.");
+                                }
+
+                                // Get or add an AudioSource component
+                                audioSource = GetComponent<AudioSource>();
+                                if (audioSource == null)
+                                {
+                                    audioSource = gameObject.AddComponent<AudioSource>();
+                                }
+                            }
+
+                            void Update()
+                            {
+                                    // Only check for win condition if the game is not lost and not already won
+                                if (!isGameLost && !hasWon)
+                                {
+                                    CheckWinCondition();
+                                }
+                            }
+
+                            public void CheckWinCondition()
+                            {
+                                GameObject[] targets = GameObject.FindGameObjectsWithTag("Target");
+                                Debug.Log($"Currently, {targets.Length} targets remain.");
+
+                                if (targets.Length == 0 && !isGameLost && !hasWon)
+                                {
+                                    hasWon = true; // Set the flag to true to prevent reactivation
+                                    Debug.Log("All targets are destroyed. Activating Winning UI.");
+                                    if (winningUI != null)
+                                    {
+                                        winningUI.SetActive(true);
+
+                                        winningUI.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 2f;
+                                        winningUI.transform.LookAt(Camera.main.transform);
+                                        winningUI.transform.Rotate(0, 180, 0);
+                                    }
+
+                                    // Play the win audio
+                                    PlayWinAudio();
+
+                                    // Destroy the arrow if it exists
+                                    GameObject arrow = GameObject.FindWithTag("Arrow");
+                                    if (arrow != null)
+                                    {
+                                        Destroy(arrow);
+                                        Debug.Log("Arrow destroyed after winning.");
+                                    }
+
+                                    // Destroy all targets
+                                    DestroyAllTargets();
+                                }
+                            }
+
+                            // Call this when the game is lost to disable win conditions
+                            public void HandleGameLost()
+                            {
+                                isGameLost = true;
+
+                                if (winningUI != null)
+                                {
+                                    winningUI.SetActive(false);
+                                }
+
+                                Debug.Log("Game is lost. Winning UI will not be shown.");
+                            }
+
+                            public void DestroyAllTargets()
+                            {
+                                GameObject[] targets = GameObject.FindGameObjectsWithTag("Target");
+                                foreach (GameObject target in targets)
+                                {
+                                    Debug.Log($"Destroying target: {target.name}");
+                                    Destroy(target);
+                                }
+
+                                GameObject[] arrows = GameObject.FindGameObjectsWithTag("Arrow");
+                                foreach (GameObject arrow in arrows)
+                                {
+                                    Debug.Log($"Destroying target: {arrow.name}");
+                                    Destroy(arrow);
+                                }
+                            }
+
+                            private void PlayWinAudio()
+                            {
+                                if (winAudioClip != null && audioSource != null)
+                                {
+                                    audioSource.clip = winAudioClip;
+                                    audioSource.volume = winAudioVolume;
+                                    audioSource.loop = false;
+                                    audioSource.Play();
+                                    Debug.Log("Win audio played.");
+                                }
+                                else
+                                {
+                                    Debug.LogWarning("Win audio clip is not assigned or AudioSource is missing.");
+                                }
+                            }
+
+                            // Public method to check if the game is won
+                            public bool HasWon()
+                            {
+                                return hasWon;
+                            }
+                        }
+
+                    </code></pre>
+                </section>
+            </section>
+            
+            
+        </section>
+
+        <section>
+            <h3>Proces</h3>
+            <button>&#10095;</button>
+
+            <section>
+                <p>Unity en C# zijn echt moeilijke programma’s om te leren als je geen ervaring in ze hebt en er geen les over krijgt. Soms voelde het echt alsof ik veel te hoog gegrepen had en dat het me echt niet zou lukken om in deze tijd te voltooien, zeker tegelijkertijd een druk team project. Als je het ene probleem oploste, creëerde je er weer 3 meer. Op gegeven moment zag ik het einde van de tunnel  niet meer. Of eigenlijk, die zag ik  helemaal niet, tot de laatste 1-2 weken van het project. </p>
+                <p>Mijn eerste kleine projectje in Unity was het schieten van kogels uit het pistool. Het daadwerkelijk schieten en raken van iets is de grootste basis van Bullseye, dus was dit het eerste waar ik mee begon. Als ik er nu naar terugkijk vond ik het wel te doen, maar toen voelde het heel moeilijk aan.</p>    
+                
+                <video width="320" height="240" controls>
+                    <source src="../img/Bullseye/Test1-shooting_cubes.mp4" type="video/mp4">
+                    Je browser ondersteunt geen video.
+                </video>
+                    
+                <p>Ik had op gegeven moment heel veel moeite met 1-2 problemen die maar niet opgelost wilden worden. Ik wist echt niet waar het fout ging, ik zat er maar naar te kijken en te kijken. Ik had al hulp gevraagd aan een leerling van de VR minor in het Wibauthuis, die mij geholpen had met het vinden van het probleem. Mijn code was correct, maar het probleem lag in de animator van Unity.</p>
+                <p>Een ander van deze twee problemen was dat het schieten het opeens niet meer deed. Hier heb ik ook het leermoment ervaren van <b>altijd</b> kopieën opslaan van je werk als deze werkt.  De oplossing was achteraf een if statement in de code die niet goed werd aangeroepen.</p>
+
+
+                <video width="320" height="240" controls>
+                    <source src="../img/Bullseye/Animation-shot.mp4" type="video/mp4">
+                    Je browser ondersteunt geen video.
+                </video> 
+            
+                <p>Tussendoor was ik ook aan het testen met familie en vrienden, die mij waardevolle feedback gaven. De kamer was bijvoorbeeld wat klein, waardoor het te snel aanvoelde wanneer de targets op je af renden. “Huh? Heb ik nu gewonnen of verloren?”, hoorde ik ook vaak genoeg terug. Hoe kon ik de staat waar je je in bevindt in het spel verduidelijken? Visueel en auditief natuurlijk. Door deze feedback begon ik meer met audio te spelen. Als je wint krijg je een win geluidje, als je verliest is dit ook duidelijk. Ook komen er schermen voor je als je gewonnen of verloren hebt.</p>
+
+                <p>Op gegeven moment zat ik zo diep in het project, dat ik van half 9 ’s ochtends tot 11 uur ’s avonds eraan werkte. Als ik er niet fysiek aan zat te werken, spookte het wel rond in mijn gedachten. Hoe kan ik dit oplossen? Oh, dit zou wel een goede zijn om toe te voegen! Zelfs de avond voor de minor expositie, waar ik het spel zou presenteren, zat ik nog allemaal ideeën toe te voegen de ik belangrijk vond. Die Bullseye zouden verrijken. De dagen na de expositie heb ik vaak genoeg nog de neiging gehad om dingen toe te voegen, waarna ik me weer herinnerde dat ik mijn VR-bril niet meer had.</p>
+            </section>
+
+        </section>
+
+        <!-- Hoe veel interviews, tests/testpersonen etc. -->
+        <ul>
+            <li>
+                <img src="../img/iconen-versie2/Testpersonen-2.svg" alt="Testpersonen icoon">
+                <p>8 testpersonen voor het prototype, 20+ testpersonen voor het eindproduct</p>
+            </li> 
+            <li>
+                <img src="../img/iconen-versie2/Versies.svg" alt="Versies icoon">
+                <p>40+ versies</p>
+            </li> 
+        </ul>
+
+        <section>
+            <h3>Resultaten</h3>
+            <button>&#10095;</button>
+
+            <section>
+                <p>Het resultaat is een schietspel waarin geen enkel spel hetzelfde is. Er zijn 6 targets die iedere 15 seconden op je af komen na een countdown. Elke target is anders; sommige zijn sneller en anderen langzamer, of ze komen op je af of ze schieten naar je. Er is er zelfs een die onverwacht van de muur afspringt.</p>
+                <p>Het spel is vrij simpel met maar 3 knoppen; wapen oppakken, schieten en X (op de Meta Quest 2) om te pauzeren. Het kost minder dan 2 minuten op zijn langst, waardoor het snel achter elkaar gespeeld kan worden, wat perfect was voor de expo van de minor Immersive Environments. Ik kan met trots zeggen dat ik de gehele avond druk was met mensen die wilden spelen.</p>
+               
+                <video width="320" height="240" controls>
+                    <source src="../img/Bullseye/bullseye-final-video.mp4" type="video/mp4">
+                    Je browser ondersteunt geen video.
+                </video> 
+            </section>
+        </section>
+    </main>
+
+    <a href="./ocearch.html" class="button-container">Volgend project &#10095;</a>
+
+    <footer>
+        <h2>Laura van der Gragt</h2>
+        <p>Neem contact met mij op via <a href= "mailto: vandergragtlaura@gmail.com">vandergragtlaura@gmail.com</a> of mijn <a href="https://www.linkedin.com/in/laura-van-der-gragt/" target="_blank">LinkedIn</a>.</p>
+    </footer>
+
+    <script src="../js/projecten.js"></script>
+    <script src="../js/code-projecten.js"></script>
+    <script src="../js/contact.js"></script>
+</body>

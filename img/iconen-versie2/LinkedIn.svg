@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Laag_1" data-name="Laag 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #132640;
+        stroke-miterlimit: 10;
+        stroke-width: 99px;
+      }
+
+      .cls-2 {
+        fill: #132640;
+        font-family: AfacadFlux-Black, 'Afacad Flux';
+        font-size: 650px;
+        font-variation-settings: 'slnt' 0, 'wght' 900;
+        font-weight: 800;
+      }
+    </style>
+  </defs>
+  <polyline class="cls-1" points="853.5 711 853.5 158.5 146.5 158.5 146.5 841.5 749 841.5"/>
+  <text class="cls-2" transform="translate(267.23 693.28)"><tspan x="0" y="0">in</tspan></text>
+</svg>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Laag_1" data-name="Laag 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #132640;
+        font-family: AzonixRegular, Azonix;
+        font-size: 200px;
+        stroke-width: 9px;
+      }
+
+      .cls-1, .cls-2 {
+        stroke: #132640;
+        stroke-miterlimit: 10;
+      }
+
+      .cls-2 {
+        fill: none;
+        stroke-width: 99px;
+      }
+    </style>
+  </defs>
+  <polyline class="cls-2" points="858.39 769.66 858.39 63.57 141.61 63.57 141.61 936.43 752.45 936.43"/>
+  <g>
+    <text class="cls-1" transform="translate(343.8 696.88)"><tspan x="0" y="0">JS</tspan></text>
+    <text class="cls-1" transform="translate(342.4 436.51)"><tspan x="0" y="0">&lt;/&gt;</tspan></text>
+  </g>
+</svg>

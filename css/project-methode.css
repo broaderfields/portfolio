@@ -1,0 +1,8 @@
+main ol li {
+    list-style:lower-roman;
+}
+
+main > section:not(:first-of-type) ol li p {
+    width: 90%;
+    margin: 0 auto;
+}
