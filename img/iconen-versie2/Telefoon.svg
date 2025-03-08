@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Laag_1" data-name="Laag 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: none;
+        stroke: #132640;
+        stroke-miterlimit: 10;
+        stroke-width: 99px;
+      }
+    </style>
+  </defs>
+  <line class="cls-1" x1="717.17" y1="216.4" x2="282.83" y2="216.4"/>
+  <polyline class="cls-1" points="825.15 760.52 825.15 78.36 174.85 78.36 174.85 921.64 729.03 921.64"/>
+  <line class="cls-1" x1="717.17" y1="778.21" x2="282.83" y2="778.21"/>
+</svg>

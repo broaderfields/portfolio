@@ -1,5 +1,10 @@
 :root {
     --text-color: #132640;
+    --background-color-overmij: #F2EDDC;
+}
+
+body {
+    background-color: var(--background-color-overmij);
 }
 
 h1, h2, h3 {
