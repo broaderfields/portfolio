@@ -8,13 +8,16 @@ body, header {
     background-color: var(--background-color-overmij);
 }
 
-h1, h2, h3 {
+h2, h3 {
     text-align: center;
     padding-top: 1.5em;
 }
 
 h1 {
+    text-align: center;
+    padding: .8em 0 .5em 0;
     font-size: 2.5em;
+    font-family: "azonix";
 }
 
 header {
