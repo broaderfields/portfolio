@@ -1,9 +1,10 @@
 :root {
     --text-color: #132640;
     --background-color-overmij: #F2EDDC;
+    --header-hover-color-text: #A6785D;
 }
 
-body {
+body, header {
     background-color: var(--background-color-overmij);
 }
 
@@ -15,6 +16,29 @@ h1, h2, h3 {
 h1 {
     font-size: 2.5em;
 }
+
+header {
+    box-shadow: none;
+}
+
+header nav button, header nav ul a, header  nav a{
+   color: var(--text-color);
+}
+
+header nav button:hover, header nav ul a:hover, header  nav a:hover{
+    color: var(--header-hover-color-text);
+}
+
+header nav a {
+    transition: color 0.3s ease;
+}
+
+header nav a:hover {
+    transition: color 0.3s ease;
+}
+
+
+
 
 main > img:first-of-type {
     display: block; /* Make the image a block element */
